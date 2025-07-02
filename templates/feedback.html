@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Give Feedback</title>
+</head>
+<body>
+    <h2>Feedback for {{ applicant.name }}</h2>
+    <p><strong>Interview Date:</strong> {{ interview.date }}</p>
+    <p><strong>Time:</strong> {{ interview.time }}</p>
+    <p><strong>Mode:</strong> {{ interview.mode }}</p>
+    <p><strong>Location/Link:</strong> {{ interview.location_or_link }}</p>
+
+    <form method="POST">
+        <label for="feedback">Feedback:</label><br>
+        <textarea name="feedback" rows="5" cols="50" required></textarea><br><br>
+
+        <label for="rating">Rating (1-5):</label>
+        <input type="number" name="rating" min="1" max="5" required><br><br>
+
+        <button type="submit">Submit Feedback</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!-- templates/apply.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Apply for Job</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            text-align: center;
+            color: #007bff;
+        }
+        form {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Apply for a Job</h2>
+<form action="{{ url_for('apply') }}" method="POST" enctype="multipart/form-data">
+
+    <label for="name">Full Name:</label>
+    <input type="text" name="name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" name="email" required>
+
+    <label for="age">Age:</label>
+    <input type="number" name="age" required>
+
+    <label for="qualification">Qualification:</label>
+    <input type="text" name="qualification" required>
+
+    <label for="job_id">Select Job:</label>
+    <select name="job_id" required>
+        <option value="">-- Select a Job --</option>
+        {% for job in jobs %}
+            <option value="{{ job.id }}">{{ job.title }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="resume">Upload Resume:</label>
+    <input type="file" name="resume" required>
+
+    <button type="submit">Submit Application</button>
+</form>
+
+
+</body>
+</html>
