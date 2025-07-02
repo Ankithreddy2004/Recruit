@@ -6,4 +6,3 @@ from flask_mail import Mail
 db = SQLAlchemy()
 mail = Mail()
 
-print("✅ my_extensions.py loaded successfully")
