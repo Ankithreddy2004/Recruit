@@ -254,6 +254,8 @@ def apply():
 
 
 #user applied details
+
+
 @app.route('/user/offer-response/<int:applicant_id>', methods=['POST'])
 def user_offer_response(applicant_id):
     if 'user' not in session:
@@ -282,8 +284,9 @@ def user_offer_response(applicant_id):
             user_applied.status = 'Rejected'
             send_rejection_email(applicant)
 
-            db.session.commit()  #  commit now to save rejection
+            db.session.commit()  
 
+            #  to select next best candidate
             #  to select next best candidate
             current_interview = Interview1.query.filter_by(applicant_id=applicant_id).first()
             if current_interview:
@@ -308,9 +311,9 @@ def user_offer_response(applicant_id):
                         next_user_applied.status = 'Offer Extended'
 
                     send_auto_selection_email(next_applicant)
-                db.session.commit()  #  commit again for auto-selection
+                db.session.commit()  # commit again for auto-selection
 
-        # Always commit at the end unless it was committed inside Rejected flow
+        #  Always commit at the end unless it was committed inside Rejected flow
         if response == 'Accepted':
             db.session.commit()
 
