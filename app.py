@@ -9,7 +9,7 @@ from my_extensions import db, mail
 from email_utils import send_user_accepted_offer_email, send_auto_selection_email
 
 from models import (
-    initialize_database, allowed_file, extract_text_from_file, calculate_ats_score,
+    initialize_database, allowed_file, extract_text_from_file, 
     Admi, User, Job1, Applicant1, UserApplied, Interview1, Feedback1
 )
 
