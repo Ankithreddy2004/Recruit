@@ -106,8 +106,11 @@ def calculate_ats_score(resume_text, job_description):
     try:
         model = GenerativeModel(model_name='gemini-1.5-flash')
         prompt = f"""
-        Analyze the following resume and job description. Provide an ATS compatibility score (0 to 100).
-        Only return the numeric score.
+           You are an ATS (Applicant Tracking System) evaluator.
+
+            Analyze the resume and job description below. Based on keyword relevance, skill match, and overall fit, provide an ATS compatibility score as a precise number (e.g., 81.2, 82.7) out of 100.
+
+            Return only the score as a numeric value with up to 1 decimal point.
 
         Job Description:
         {job_description}
@@ -117,10 +120,12 @@ def calculate_ats_score(resume_text, job_description):
         """
         response = model.generate_content(prompt)
         match = re.search(r'\d+(\.\d+)?', response.text.strip())
-        return float(match.group(0)) if match else 0.5
+        return float(match.group(0)) if match else 0
     except Exception as e:
         print("[Gemini Error]", e)
-        return 0.5
+        return 0
+
+
 
 def initialize_database(app):
     with app.app_context():

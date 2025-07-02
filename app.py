@@ -9,7 +9,7 @@ from my_extensions import db, mail
 from email_utils import send_user_accepted_offer_email, send_auto_selection_email
 
 from models import (
-    initialize_database, allowed_file, extract_text_from_file, 
+    initialize_database, allowed_file, extract_text_from_file, calculate_ats_score,
     Admi, User, Job1, Applicant1, UserApplied, Interview1, Feedback1
 )
 
@@ -255,6 +255,70 @@ def apply():
 
 #user applied details
 
+# @app.route('/user/offer-response/<int:applicant_id>', methods=['POST'])
+# def user_offer_response(applicant_id):
+#     if 'user' not in session:
+#         flash('Please login first', 'warning')
+#         return redirect(url_for('login_user'))
+
+#     response = request.form.get('response')  # 'Accepted' or 'Rejected'
+#     applicant = Applicant1.query.get_or_404(applicant_id)
+#     user_applied = UserApplied.query.filter_by(applicant_id=applicant_id).first()
+
+#     if not user_applied or user_applied.status != 'Offer Extended':
+#         flash('Invalid action.', 'danger')
+#         return redirect(url_for('user_applied_details'))
+
+#     try:
+#         applicant.user_response = response
+#         user_applied.user_response = response
+
+#         if response == 'Accepted':
+#             applicant.final_decision = 'Accepted'
+#             user_applied.status = 'Offer Accepted'   
+#             send_user_accepted_offer_email(applicant)
+            
+
+#         elif response == 'Rejected':
+#             applicant.final_decision = 'Rejected'
+#             user_applied.status = 'Rejected'
+#             send_rejection_email(applicant)
+#             db.session.commit()
+#             current_interview = Interview1.query.filter_by(applicant_id=applicant_id).first()
+#             if current_interview:
+#                 job_id = applicant.job_id
+#                 next_best = (
+#                     Feedback1.query
+#                     .join(Interview1)
+#                     .join(Applicant1)
+#                     .filter(Applicant1.job_id == job_id)
+#                     .filter(Applicant1.final_decision.is_(None))
+#                     .filter(Applicant1.id != applicant_id)
+#                     .order_by(Feedback1.rating.desc())
+#                     .first()
+#                 )
+
+#                 if next_best:
+#                     next_applicant = next_best.interview.applicant
+#                     next_applicant.final_decision = 'Accepted'
+
+#                     next_user_applied = UserApplied.query.filter_by(applicant_id=next_applicant.id).first()
+#                     if next_user_applied:
+#                         next_user_applied.status = 'Offer Extended'
+
+#                     send_auto_selection_email(next_applicant)
+#                 db.session.commit()  
+
+#         else:
+#             db.session.commit()
+
+#         flash(f"You have {response} the offer.", "info")
+
+#     except Exception as e:
+#         db.session.rollback()
+#         flash(f"Something went wrong: {str(e)}", "danger")
+
+#     return redirect(url_for('user_applied_details'))
 @app.route('/user/offer-response/<int:applicant_id>', methods=['POST'])
 def user_offer_response(applicant_id):
     if 'user' not in session:
@@ -275,6 +339,7 @@ def user_offer_response(applicant_id):
 
         if response == 'Accepted':
             applicant.final_decision = 'Accepted'
+            user_applied.status = 'Offer Accepted'
             send_user_accepted_offer_email(applicant)
 
         elif response == 'Rejected':
@@ -282,10 +347,9 @@ def user_offer_response(applicant_id):
             user_applied.status = 'Rejected'
             send_rejection_email(applicant)
 
-            # ✅ Commit FIRST to preserve user's own response
-            db.session.commit()
+            db.session.commit()  # ✅ commit now to save rejection
 
-            # ✅ THEN try to select the next best candidate
+            # ✅ Try to select next best candidate
             current_interview = Interview1.query.filter_by(applicant_id=applicant_id).first()
             if current_interview:
                 job_id = applicant.job_id
@@ -309,9 +373,10 @@ def user_offer_response(applicant_id):
                         next_user_applied.status = 'Offer Extended'
 
                     send_auto_selection_email(next_applicant)
-                db.session.commit()  # ✅ Commit again after auto-selection
+                db.session.commit()  # ✅ commit again for auto-selection
 
-        else:
+        # ✅ Always commit at the end unless it was committed inside Rejected flow
+        if response == 'Accepted':
             db.session.commit()
 
         flash(f"You have {response} the offer.", "info")
