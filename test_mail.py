@@ -16,9 +16,9 @@ def send_test_email():
     try:
         msg = Message("Test Email", recipients=["your_other_email@gmail.com"], body="This is a test.")
         mail.send(msg)
-        return "✅ Mail sent successfully!"
+        return " Mail sent successfully!"
     except Exception as e:
-        return f"❌ Failed to send mail: {e}"
+        return f" Failed to send mail: {e}"
 
 if __name__ == '__main__':
     app.run(debug=True)
