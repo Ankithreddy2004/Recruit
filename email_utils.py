@@ -10,7 +10,7 @@ def send_rejection_email(applicant):
         msg = Message('Application Rejected', recipients=[applicant.email])
         msg.body = f"""Dear {applicant.name},
 
-Thank you for applying. We regret to inform you that you were not selected.
+Thank you for our company applying. We regret to inform you that you were not selected.
 
 Best regards,
 HR Team"""
