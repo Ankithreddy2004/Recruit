@@ -51,17 +51,55 @@ mail.init_app(app)
 initialize_database(app)
 
 
+# @app.before_request
+# def before_request():
+#     public_endpoints = [
+#         'mainhome', 'login', 'signup', 'signup_user', 'login_user',
+#         'apply', 'job_listings', 'job_detail', 'serve_resume',
+#         'uploaded_file', 'static'
+#     ]
+#     if request.endpoint and request.endpoint not in public_endpoints:
+#         if 'admin' not in session and 'user' not in session:
+#             flash('Please login to access this page', 'warning')
+#             return redirect(url_for('login_user'))
+
+
+
 @app.before_request
-def before_request():
-    public_endpoints = [
-        'mainhome', 'login', 'signup', 'signup_user', 'login_user',
-        'apply', 'job_listings', 'job_detail', 'serve_resume',
-        'uploaded_file', 'static'
+def require_login():
+    path = request.path
+    public_paths = [
+        '/', '/login', '/signup', '/signupuser', '/loginuser',
+        '/apply', '/jobs', '/logout', '/logoutuser'
     ]
-    if request.endpoint and request.endpoint not in public_endpoints:
-        if 'admin' not in session and 'user' not in session:
-            flash('Please login to access this page', 'warning')
-            return redirect(url_for('login_user'))
+
+    # Allow public paths
+    if path in public_paths:
+        return
+
+    # Allow static files and resume downloads
+    if path.startswith('/static') or path.startswith('/resumes'):
+        return
+
+    # Explicitly protect /userhome
+    if path == '/userhome' and 'user' not in session:
+        flash('User login required', 'danger')
+        return redirect(url_for('login_user'))
+
+    # Protect all /user/ routes
+    if path.startswith('/user') and 'user' not in session:
+        flash('User login required', 'danger')
+        return redirect(url_for('login_user'))
+
+    # Protect /admin/ routes
+    if path.startswith('/admin') and 'admin' not in session:
+        flash('Admin login required', 'danger')
+        return redirect(url_for('login'))
+
+    if 'admin' not in session and 'user' not in session:
+        flash('Please log in to access this page.', 'warning')
+        return redirect(url_for('login_user'))
+
 
 
 @app.route('/')
