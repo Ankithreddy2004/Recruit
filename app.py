@@ -51,20 +51,6 @@ mail.init_app(app)
 initialize_database(app)
 
 
-# @app.before_request
-# def before_request():
-#     public_endpoints = [
-#         'mainhome', 'login', 'signup', 'signup_user', 'login_user',
-#         'apply', 'job_listings', 'job_detail', 'serve_resume',
-#         'uploaded_file', 'static'
-#     ]
-#     if request.endpoint and request.endpoint not in public_endpoints:
-#         if 'admin' not in session and 'user' not in session:
-#             flash('Please login to access this page', 'warning')
-#             return redirect(url_for('login_user'))
-
-
-
 @app.before_request
 def require_login():
     path = request.path
