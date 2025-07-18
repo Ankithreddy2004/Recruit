@@ -21,7 +21,7 @@ def send_offer_extended_email(applicant):
         msg = Message('Offer Extended - Your Action Needed', recipients=[applicant.email])
         msg.body = f"""Dear {applicant.name},
 
-Congratulations! Based on your interview performance, we are extending a job offer.
+Congratulations! Based on your interview performance, we are extending a job offer for you.
 
 Please log in to your account and respond by accepting or rejecting the offer.
 
@@ -41,7 +41,7 @@ def send_user_accepted_offer_email(applicant):
         msg = Message('Offer Letter - Congratulations!', recipients=[applicant.email])
         msg.body = f"""Dear {applicant.name},
 
-Congratulations! You have accepted the offer. We are excited to welcome you.
+Congratulations {applicant.name}! You have accepted the offer, and We are excited to welcome you.
 
 Best regards,
 HR Team"""
